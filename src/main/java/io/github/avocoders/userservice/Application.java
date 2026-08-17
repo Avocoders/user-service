@@ -40,6 +40,14 @@ public class Application {
             findUser2.ifPresentOrElse(System.out::println,
                     () -> System.out.println("User not found"));
 
+            boolean deleted = userRepository.deleteById(updatedUser.getId());
+            System.out.println("Deleted: " + deleted);
+
+            userRepository.findById(updatedUser.getId())
+                    .ifPresentOrElse(
+                            System.out::println,
+                            () -> System.out.println("User was deleted")
+                    );
         }
         finally{
             HibernateUtil.shutdown();

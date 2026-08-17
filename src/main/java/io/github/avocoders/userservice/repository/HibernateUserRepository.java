@@ -83,7 +83,19 @@ public class HibernateUserRepository implements UserRepository{
 
     @Override
     public boolean deleteById(Long id) {
-        return false;
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()){
+            transaction = session.beginTransaction();
+            User user = session.find(User.class, id);
+            boolean deleted = user != null;
+            if (deleted){
+                session.remove(user);
+            }
+            transaction.commit();
+            return deleted;
+        } catch (HibernateException exception){
+            throw new UserPersistenceException("Failed to delete user: " + id, exception);
+        }
     }
 
 }
