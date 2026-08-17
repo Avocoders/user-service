@@ -67,7 +67,18 @@ public class HibernateUserRepository implements UserRepository{
 
     @Override
     public User update(User user) {
-        return null;
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()){
+            transaction = session.beginTransaction();
+            User updateUser = session.merge(user);
+            transaction.commit();
+            return updateUser;
+        } catch (HibernateException exception){
+            if (transaction != null && transaction.isActive()){
+                transaction.rollback();
+            }
+            throw new UserPersistenceException("Failed to update user: " + user.getId(), exception);
+        }
     }
 
     @Override
