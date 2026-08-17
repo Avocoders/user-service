@@ -1,11 +1,16 @@
 package io.github.avocoders.userservice;
 
+import io.github.avocoders.userservice.entity.User;
+import io.github.avocoders.userservice.repository.HibernateUserRepository;
+import io.github.avocoders.userservice.repository.UserRepository;
 import org.hibernate.SessionFactory;
 import io.github.avocoders.userservice.config.HibernateUtil;
 
 public class Application {
     public static void main(String[] args){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        UserRepository userRepository = new HibernateUserRepository(sessionFactory);
+        User user = new User("Name", "name@email.ru", 30);
         try{
             if (sessionFactory.isOpen()) {
                 System.out.println("Connected");
@@ -13,10 +18,13 @@ public class Application {
             else {
                 System.out.println("Disconnected");
             }
+            User savedUser = userRepository.save(user);
+            System.out.println(savedUser);
         }
         finally{
             HibernateUtil.shutdown();
         }
+
 
     }
 }
