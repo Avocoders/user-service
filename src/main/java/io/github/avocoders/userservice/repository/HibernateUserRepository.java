@@ -35,7 +35,18 @@ public class HibernateUserRepository implements UserRepository{
 
     @Override
     public Optional<User> findById(Long id) {
-        return Optional.empty();
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()){
+            transaction = session.beginTransaction();
+            User user = session.find(User.class, id);
+            transaction.commit();
+            return Optional.ofNullable(user);
+        } catch (HibernateException exception){
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new UserPersistenceException("Failed to find by id = " + id, exception);
+        }
     }
 
     @Override

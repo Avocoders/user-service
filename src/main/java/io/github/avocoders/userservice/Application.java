@@ -5,12 +5,13 @@ import io.github.avocoders.userservice.repository.HibernateUserRepository;
 import io.github.avocoders.userservice.repository.UserRepository;
 import org.hibernate.SessionFactory;
 import io.github.avocoders.userservice.config.HibernateUtil;
+import java.util.Optional;
 
 public class Application {
     public static void main(String[] args){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         UserRepository userRepository = new HibernateUserRepository(sessionFactory);
-        User user = new User("Name", "name@email.ru", 30);
+        User user = new User("Name", "name1@email.ru", 30);
         try{
             if (sessionFactory.isOpen()) {
                 System.out.println("Connected");
@@ -20,6 +21,10 @@ public class Application {
             }
             User savedUser = userRepository.save(user);
             System.out.println(savedUser);
+
+            Optional<User> findUser = userRepository.findById(savedUser.getId());
+            findUser.ifPresentOrElse(System.out::println,
+                        () -> System.out.println("User not found"));
         }
         finally{
             HibernateUtil.shutdown();
