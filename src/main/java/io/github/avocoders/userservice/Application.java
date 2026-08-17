@@ -13,7 +13,7 @@ public class Application {
     public static void main(String[] args){
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         UserRepository userRepository = new HibernateUserRepository(sessionFactory);
-        User user = new User("Name", "name3@email.ru", 30);
+        User user = new User("Name", "name5@email.ru", 30);
         try{
             if (sessionFactory.isOpen()) {
                 System.out.println("Connected");

@@ -94,6 +94,9 @@ public class HibernateUserRepository implements UserRepository{
             transaction.commit();
             return deleted;
         } catch (HibernateException exception){
+            if (transaction != null && transaction.isActive()){
+                transaction.rollback();
+            }
             throw new UserPersistenceException("Failed to delete user: " + id, exception);
         }
     }
