@@ -1,7 +1,11 @@
 package io.github.avocoders.userservice.repository;
 
 import io.github.avocoders.userservice.entity.User;
+import io.github.avocoders.userservice.exception.UserPersistenceException;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +19,18 @@ public class HibernateUserRepository implements UserRepository{
 
     @Override
     public User save(User user) {
-        return null;
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.persist(user);
+            transaction.commit();
+            return user;
+        } catch (HibernateException exception) {
+            if (transaction != null && transaction.isActive()){
+                transaction.rollback();
+            }
+            throw new UserPersistenceException("Failed to save user", exception);
+        }
     }
 
     @Override
