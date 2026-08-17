@@ -42,7 +42,7 @@ public class HibernateUserRepository implements UserRepository{
             transaction.commit();
             return Optional.ofNullable(user);
         } catch (HibernateException exception){
-            if (transaction != null && transaction.isActive()) {
+            if (transaction != null && transaction.isActive()){
                 transaction.rollback();
             }
             throw new UserPersistenceException("Failed to find by id = " + id, exception);
@@ -51,7 +51,18 @@ public class HibernateUserRepository implements UserRepository{
 
     @Override
     public List<User> findAll() {
-        return List.of();
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()){
+            transaction = session.beginTransaction();
+            List<User> users = session.createSelectionQuery("from User order by id", User.class).getResultList();
+            transaction.commit();
+            return users;
+        } catch (HibernateException exception){
+            if (transaction != null && transaction.isActive()){
+               transaction.rollback();
+            }
+            throw new UserPersistenceException("Failed to find All", exception);
+        }
     }
 
     @Override
