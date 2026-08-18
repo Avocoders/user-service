@@ -27,7 +27,7 @@ public class UserValidator {
             throw new UserValidationException("User email has invalid format");
         }
     }
-    public void validationAge(Integer age){
+    public void validateAge(Integer age){
         if( age == null || age < 0 || age > 150){
             throw new UserValidationException("User age is not right. It may be between 0 and 150");
         }
