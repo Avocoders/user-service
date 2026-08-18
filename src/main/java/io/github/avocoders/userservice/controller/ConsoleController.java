@@ -14,4 +14,30 @@ public class ConsoleController {
         this.exceptionHandler = exceptionHandler;
         this.scanner = scanner;
     }
+    private void printMenu(){
+        System.out.println(
+                "1 - Create user\n" +
+                "2 - Find user by id\n" +
+                "3 - Find all users\n" +
+                "4 - Update user\n" +
+                "5 - Delete user\n" +
+                "0 - Exit\n" +
+                "Choose an action: "
+        );
+    }
+    public void run(){
+        printMenu();
+        String command = scanner.nextLine().trim();
+        System.out.println("You selected: " + command);
+        switch (command){
+            case "1" -> System.out.println("Create user selected");
+            case "2" -> System.out.println("Find user by id");
+            case "3" -> System.out.println("Find all users");
+            case "4" -> System.out.println("Update user");
+            case "5" -> System.out.println("Delete user");
+            case "0" -> System.out.println("Application stopped");
+            default -> System.out.println("Not found");
+        }
+    }
+
 }
