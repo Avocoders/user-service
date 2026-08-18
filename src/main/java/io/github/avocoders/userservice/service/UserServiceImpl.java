@@ -43,11 +43,27 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Optional<UserDto> updateUser(Long id, String name, String email, Integer age) {
-        return Optional.empty();
+        userValidator.validateId(id);
+        userValidator.validateName(name);
+        userValidator.validateEmail(email);
+        userValidator.validateAge(age);
+        Optional<User> optionalUser = userRepository.findById(id);
+        if( optionalUser.isEmpty()){
+            return Optional.empty();
+        }
+        User user = optionalUser.get();
+        user.setName(name);
+        user.setEmail(email);
+        user.setAge(age);
+        User updatedUser = userRepository.update(user);
+        UserDto userDto = userMapper.toDto(updatedUser);
+
+        return Optional.of(userDto);
     }
 
     @Override
     public boolean deleteUser(Long id) {
-        return false;
+        userValidator.validateId(id);
+        return userRepository.deleteById(id);
     }
 }
