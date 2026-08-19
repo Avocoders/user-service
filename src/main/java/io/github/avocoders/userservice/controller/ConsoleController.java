@@ -1,5 +1,6 @@
 package io.github.avocoders.userservice.controller;
 
+import io.github.avocoders.userservice.dtos.UserDto;
 import io.github.avocoders.userservice.handler.UserExceptionHandler;
 import io.github.avocoders.userservice.service.UserService;
 import java.util.Scanner;
@@ -31,7 +32,7 @@ public class ConsoleController {
         while(!command.equals("0")){
             System.out.println("You selected: " + command);
             switch (command){
-                case "1" -> System.out.println("Create user selected");
+                case "1" -> createUser();
                 case "2" -> System.out.println("Find user by id");
                 case "3" -> System.out.println("Find all users");
                 case "4" -> System.out.println("Update user");
@@ -42,6 +43,17 @@ public class ConsoleController {
             command = scanner.nextLine().trim();
         }
         System.out.println("Application stopped");
+    }
+
+    private void createUser(){
+        System.out.println("Enter name: ");
+        String name = scanner.nextLine();
+        System.out.println("Enter email: ");
+        String email = scanner.nextLine().trim();
+        System.out.println("Enter age: ");
+        String age = scanner.nextLine().trim();
+        UserDto newUser = userService.createUser(name, email, Integer.valueOf(age));
+        System.out.println("Created user:\n" + newUser);
     }
 
 }
