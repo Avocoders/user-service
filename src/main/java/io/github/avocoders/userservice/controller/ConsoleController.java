@@ -5,6 +5,8 @@ import io.github.avocoders.userservice.exception.UserPersistenceException;
 import io.github.avocoders.userservice.exception.UserValidationException;
 import io.github.avocoders.userservice.handler.UserExceptionHandler;
 import io.github.avocoders.userservice.service.UserService;
+
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ConsoleController {
@@ -36,7 +38,7 @@ public class ConsoleController {
             try {
                 switch (command){
                     case "1" -> createUser();
-                    case "2" -> System.out.println("Find user by id");
+                    case "2" -> findUserById();
                     case "3" -> System.out.println("Find all users");
                     case "4" -> System.out.println("Update user");
                     case "5" -> System.out.println("Delete user");
@@ -64,6 +66,14 @@ public class ConsoleController {
         String age = scanner.nextLine().trim();
         UserDto newUser = userService.createUser(name, email, Integer.valueOf(age));
         System.out.println("Created user:\n" + newUser);
+    }
+
+    private void findUserById(){
+        System.out.println("Enter user id: ");
+        String id = scanner.nextLine().trim();
+        Optional<UserDto> foundUser = userService.getUserById(Long.valueOf(id));
+        foundUser.ifPresentOrElse(System.out::println,
+                () -> System.out.println("User not found"));
     }
 
 
