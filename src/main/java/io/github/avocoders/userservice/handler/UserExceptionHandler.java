@@ -10,4 +10,7 @@ public class UserExceptionHandler {
     public void handle(UserPersistenceException exception){
         System.out.println("Database error: " + exception.getMessage());
     }
+    public void handle(NumberFormatException exception){
+        System.out.println("Input error: enter a whole number");
+    }
 }

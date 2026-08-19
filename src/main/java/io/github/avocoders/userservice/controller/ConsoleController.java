@@ -1,6 +1,8 @@
 package io.github.avocoders.userservice.controller;
 
 import io.github.avocoders.userservice.dtos.UserDto;
+import io.github.avocoders.userservice.exception.UserPersistenceException;
+import io.github.avocoders.userservice.exception.UserValidationException;
 import io.github.avocoders.userservice.handler.UserExceptionHandler;
 import io.github.avocoders.userservice.service.UserService;
 import java.util.Scanner;
@@ -31,13 +33,21 @@ public class ConsoleController {
         String command = scanner.nextLine().trim();
         while(!command.equals("0")){
             System.out.println("You selected: " + command);
-            switch (command){
-                case "1" -> createUser();
-                case "2" -> System.out.println("Find user by id");
-                case "3" -> System.out.println("Find all users");
-                case "4" -> System.out.println("Update user");
-                case "5" -> System.out.println("Delete user");
-                default -> System.out.println("Not found");
+            try {
+                switch (command){
+                    case "1" -> createUser();
+                    case "2" -> System.out.println("Find user by id");
+                    case "3" -> System.out.println("Find all users");
+                    case "4" -> System.out.println("Update user");
+                    case "5" -> System.out.println("Delete user");
+                    default -> System.out.println("Not found");
+                }
+            } catch (NumberFormatException exception){
+                exceptionHandler.handle(exception);
+            } catch (UserValidationException exception){
+                exceptionHandler.handle(exception);
+            } catch (UserPersistenceException exception){
+                exceptionHandler.handle(exception);
             }
             printMenu();
             command = scanner.nextLine().trim();
@@ -55,5 +65,7 @@ public class ConsoleController {
         UserDto newUser = userService.createUser(name, email, Integer.valueOf(age));
         System.out.println("Created user:\n" + newUser);
     }
+
+
 
 }
