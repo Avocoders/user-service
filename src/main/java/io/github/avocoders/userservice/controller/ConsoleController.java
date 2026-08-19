@@ -28,16 +28,20 @@ public class ConsoleController {
     public void run(){
         printMenu();
         String command = scanner.nextLine().trim();
-        System.out.println("You selected: " + command);
-        switch (command){
-            case "1" -> System.out.println("Create user selected");
-            case "2" -> System.out.println("Find user by id");
-            case "3" -> System.out.println("Find all users");
-            case "4" -> System.out.println("Update user");
-            case "5" -> System.out.println("Delete user");
-            case "0" -> System.out.println("Application stopped");
-            default -> System.out.println("Not found");
+        while(!command.equals("0")){
+            System.out.println("You selected: " + command);
+            switch (command){
+                case "1" -> System.out.println("Create user selected");
+                case "2" -> System.out.println("Find user by id");
+                case "3" -> System.out.println("Find all users");
+                case "4" -> System.out.println("Update user");
+                case "5" -> System.out.println("Delete user");
+                default -> System.out.println("Not found");
+            }
+            printMenu();
+            command = scanner.nextLine().trim();
         }
+        System.out.println("Application stopped");
     }
 
 }
