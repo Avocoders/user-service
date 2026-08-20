@@ -10,11 +10,15 @@ import io.github.avocoders.userservice.service.UserService;
 import io.github.avocoders.userservice.service.UserServiceImpl;
 import io.github.avocoders.userservice.validators.UserValidator;
 import org.hibernate.SessionFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Scanner;
 
 public class Application {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+
     public static void main(String[] args){
+        LOGGER.info("Application started");
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         UserRepository userRepository = new HibernateUserRepository(sessionFactory);
         UserMapper userMapper = new UserMapper();
@@ -28,8 +32,7 @@ public class Application {
         }
         finally{
             HibernateUtil.shutdown();
+            LOGGER.info("Application stopped");
         }
-
-
     }
 }
