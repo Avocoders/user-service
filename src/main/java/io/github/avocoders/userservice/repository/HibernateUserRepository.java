@@ -19,85 +19,95 @@ public class HibernateUserRepository implements UserRepository{
 
     @Override
     public User save(User user) {
-        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(user);
-            transaction.commit();
-            return user;
-        } catch (HibernateException exception) {
-            if (transaction != null && transaction.isActive()){
-                transaction.rollback();
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                session.persist(user);
+                transaction.commit();
+                return user;
+            } catch (HibernateException exception) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw new UserPersistenceException("Failed to save user", exception);
             }
-            throw new UserPersistenceException("Failed to save user", exception);
         }
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()){
-            transaction = session.beginTransaction();
-            User user = session.find(User.class, id);
-            transaction.commit();
-            return Optional.ofNullable(user);
-        } catch (HibernateException exception){
-            if (transaction != null && transaction.isActive()){
-                transaction.rollback();
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                User user = session.find(User.class, id);
+                transaction.commit();
+                return Optional.ofNullable(user);
+            } catch (HibernateException exception){
+                if (transaction != null && transaction.isActive()){
+                    transaction.rollback();
+                }
+                throw new UserPersistenceException("Failed to find by id = " + id, exception);
             }
-            throw new UserPersistenceException("Failed to find by id = " + id, exception);
         }
     }
 
     @Override
     public List<User> findAll() {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()){
-            transaction = session.beginTransaction();
-            List<User> users = session.createSelectionQuery("from User order by id", User.class).getResultList();
-            transaction.commit();
-            return users;
-        } catch (HibernateException exception){
-            if (transaction != null && transaction.isActive()){
-               transaction.rollback();
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                List<User> users = session.createSelectionQuery("from User order by id", User.class).getResultList();
+                transaction.commit();
+                return users;
+            } catch (HibernateException exception){
+                if (transaction != null && transaction.isActive()){
+                    transaction.rollback();
+                }
+                throw new UserPersistenceException("Failed to find all users", exception);
             }
-            throw new UserPersistenceException("Failed to find All", exception);
         }
     }
 
     @Override
     public User update(User user) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()){
-            transaction = session.beginTransaction();
-            User updateUser = session.merge(user);
-            transaction.commit();
-            return updateUser;
-        } catch (HibernateException exception){
-            if (transaction != null && transaction.isActive()){
-                transaction.rollback();
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                User updatedUser = session.merge(user);
+                transaction.commit();
+                return updatedUser;
+            } catch (HibernateException exception){
+                if (transaction != null && transaction.isActive()){
+                    transaction.rollback();
+                }
+                throw new UserPersistenceException("Failed to update user: " + user.getId(), exception);
             }
-            throw new UserPersistenceException("Failed to update user: " + user.getId(), exception);
         }
     }
 
     @Override
     public boolean deleteById(Long id) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()){
-            transaction = session.beginTransaction();
-            User user = session.find(User.class, id);
-            boolean deleted = user != null;
-            if (deleted){
-                session.remove(user);
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                User user = session.find(User.class, id);
+                boolean deleted = user != null;
+                if (deleted){
+                    session.remove(user);
+                }
+                transaction.commit();
+                return deleted;
+            } catch (HibernateException exception){
+                if (transaction != null && transaction.isActive()){
+                    transaction.rollback();
+                }
+                throw new UserPersistenceException("Failed to delete user: " + id, exception);
             }
-            transaction.commit();
-            return deleted;
-        } catch (HibernateException exception){
-            if (transaction != null && transaction.isActive()){
-                transaction.rollback();
-            }
-            throw new UserPersistenceException("Failed to delete user: " + id, exception);
         }
     }
 
