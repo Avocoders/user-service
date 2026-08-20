@@ -61,7 +61,7 @@ public class HibernateUserRepository implements UserRepository{
             if (transaction != null && transaction.isActive()){
                transaction.rollback();
             }
-            throw new UserPersistenceException("Failed to find All", exception);
+            throw new UserPersistenceException("Failed to find all users", exception);
         }
     }
 
@@ -70,9 +70,9 @@ public class HibernateUserRepository implements UserRepository{
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()){
             transaction = session.beginTransaction();
-            User updateUser = session.merge(user);
+            User updatedUser = session.merge(user);
             transaction.commit();
-            return updateUser;
+            return updatedUser;
         } catch (HibernateException exception){
             if (transaction != null && transaction.isActive()){
                 transaction.rollback();
