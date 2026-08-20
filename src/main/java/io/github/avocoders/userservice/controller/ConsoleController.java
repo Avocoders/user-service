@@ -79,7 +79,7 @@ public class ConsoleController {
 
     private void getAllUsers(){
         List<UserDto> users = userService.getAllUsers();
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             System.out.println("No users found");
         } else {
             users.forEach(System.out::println);
@@ -105,9 +105,9 @@ public class ConsoleController {
         System.out.println("Delete user by id: ");
         String id = scanner.nextLine().trim();
         boolean deletedUser = userService.deleteUser(Long.valueOf(id));
-        if(deletedUser){
+        if (deletedUser) {
             System.out.println("User deleted");
-        } else{
+        } else {
             System.out.println("User not found");
         }
     }
