@@ -41,7 +41,7 @@ public class ConsoleController {
                     case "1" -> createUser();
                     case "2" -> findUserById();
                     case "3" -> getAllUsers();
-                    case "4" -> System.out.println("Update user");
+                    case "4" -> updateUser();
                     case "5" -> System.out.println("Delete user");
                     default -> System.out.println("Not found");
                 }
@@ -86,6 +86,20 @@ public class ConsoleController {
         }
     }
 
+    private void updateUser(){
+        System.out.println("Enter user id: ");
+        String id = scanner.nextLine().trim();
+        System.out.println("Enter new name: ");
+        String newName = scanner.nextLine();
+        System.out.println("Enter new email: ");
+        String newEmail = scanner.nextLine().trim();
+        System.out.println("Enter new age: ");
+        String newAge = scanner.nextLine().trim();
+        Optional<UserDto> updatedUser = userService.updateUser(
+                Long.valueOf(id), newName, newEmail, Integer.valueOf(newAge));
+        updatedUser.ifPresentOrElse(System.out::println,
+                () -> System.out.println("User not found"));
 
+    }
 
 }
