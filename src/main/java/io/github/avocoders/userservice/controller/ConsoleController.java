@@ -42,7 +42,7 @@ public class ConsoleController {
                     case "2" -> findUserById();
                     case "3" -> getAllUsers();
                     case "4" -> updateUser();
-                    case "5" -> System.out.println("Delete user");
+                    case "5" -> deleteUser();
                     default -> System.out.println("Not found");
                 }
             } catch (NumberFormatException exception){
@@ -99,7 +99,17 @@ public class ConsoleController {
                 Long.valueOf(id), newName, newEmail, Integer.valueOf(newAge));
         updatedUser.ifPresentOrElse(System.out::println,
                 () -> System.out.println("User not found"));
+    }
 
+    private void deleteUser(){
+        System.out.println("Delete user by id: ");
+        String id = scanner.nextLine().trim();
+        boolean deletedUser = userService.deleteUser(Long.valueOf(id));
+        if(deletedUser){
+            System.out.println("User deleted");
+        } else{
+            System.out.println("User not found");
+        }
     }
 
 }
