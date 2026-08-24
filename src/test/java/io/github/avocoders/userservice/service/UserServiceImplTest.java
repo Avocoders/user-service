@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,5 +43,11 @@ class UserServiceImplTest {
 
         assertSame(expectedDto, actualDto);
 
+        verify(userValidator).validateName(name);
+        verify(userValidator).validateEmail(email);
+        verify(userValidator).validateAge(age);
+        verify(userRepository).save(any(User.class));
+        verify(userMapper).toDto(savedUser);
     }
+
 }
