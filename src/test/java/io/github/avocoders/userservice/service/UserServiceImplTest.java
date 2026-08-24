@@ -5,13 +5,12 @@ import io.github.avocoders.userservice.entity.User;
 import io.github.avocoders.userservice.mappers.UserMapper;
 import io.github.avocoders.userservice.repository.UserRepository;
 import io.github.avocoders.userservice.validators.UserValidator;
-import org.checkerframework.checker.index.qual.LengthOf;
-import org.hibernate.Length;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,6 +116,20 @@ class UserServiceImplTest {
         verify(userRepository).findAll();
         verify(userMapper).toDto(user1);
         verify(userMapper).toDto(user2);
+        verifyNoInteractions(userValidator);
+    }
+
+    @Test
+    void getAllUsers_shouldReturnEmptyList_whenUsersDoNotExist(){
+
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<UserDto> actual = userService.getAllUsers();
+
+        assertTrue(actual.isEmpty());
+
+        verify(userRepository).findAll();
+        verifyNoInteractions(userMapper);
         verifyNoInteractions(userValidator);
     }
 }
