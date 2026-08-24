@@ -5,17 +5,19 @@ import io.github.avocoders.userservice.entity.User;
 import io.github.avocoders.userservice.mappers.UserMapper;
 import io.github.avocoders.userservice.repository.UserRepository;
 import io.github.avocoders.userservice.validators.UserValidator;
+import org.checkerframework.checker.index.qual.LengthOf;
+import org.hibernate.Length;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -79,5 +81,42 @@ class UserServiceImplTest {
         verify(userValidator).validateId(id);
         verify(userRepository).findById(id);
         verify(userMapper).toDto(foundUser);
+    }
+
+    @Test
+    void getUserById_shouldReturnEmpty_whenUserDoesNotExist(){
+        Long id = 1L;
+
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<UserDto> actual = userService.getUserById(id);
+        assertTrue(actual.isEmpty());
+
+        verify(userValidator).validateId(id);
+        verify(userRepository).findById(id);
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
+    void getAllUsers_shouldReturnDtos_whenUsersExist(){
+        User user1 = new User("Sasha", "sasha@ya.ru", 5);
+        User user2 = new User("Kirill", "kirill@ya.ru", 5);
+        UserDto expectedDto1 = new UserDto(2L, "Sasha", "sasha@ya.ru");
+        UserDto expectedDto2 = new UserDto(3L, "Kirill", "kirill@ya.ru");
+
+        when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+        when(userMapper.toDto(user1)).thenReturn(expectedDto1);
+        when(userMapper.toDto(user2)).thenReturn(expectedDto2);
+
+        List<UserDto> actual = userService.getAllUsers();
+
+        assertEquals(2, actual.size());
+        assertSame(expectedDto1, actual.get(0));
+        assertSame(expectedDto2, actual.get(1));
+
+        verify(userRepository).findAll();
+        verify(userMapper).toDto(user1);
+        verify(userMapper).toDto(user2);
+        verifyNoInteractions(userValidator);
     }
 }
