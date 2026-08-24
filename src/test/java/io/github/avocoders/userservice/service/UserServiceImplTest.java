@@ -7,8 +7,7 @@ import io.github.avocoders.userservice.repository.UserRepository;
 import io.github.avocoders.userservice.validators.UserValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,8 +45,19 @@ class UserServiceImplTest {
         verify(userValidator).validateName(name);
         verify(userValidator).validateEmail(email);
         verify(userValidator).validateAge(age);
-        verify(userRepository).save(any(User.class));
+
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(argumentCaptor.capture());
+
+        User capturedUser = argumentCaptor.getValue();
+
+        assertEquals(name, capturedUser.getName());
+        assertEquals(email, capturedUser.getEmail());
+        assertEquals(age, capturedUser.getAge());
+
         verify(userMapper).toDto(savedUser);
     }
+
 
 }
