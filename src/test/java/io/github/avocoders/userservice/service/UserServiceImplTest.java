@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -59,5 +61,23 @@ class UserServiceImplTest {
         verify(userMapper).toDto(savedUser);
     }
 
+    @Test
+    void getUserById_shouldReturnDto_whenUserExists() {
+        Long id = 1L;
+        User foundUser = new User("Anna", "anna@ya.ru", 3);
+        UserDto expectedDto = new UserDto(id, "Anna", "anna@ya.ru");
 
+        when(userRepository.findById(id)).thenReturn(Optional.of(foundUser));
+
+        when(userMapper.toDto(foundUser)).thenReturn(expectedDto);
+
+        Optional<UserDto> actual = userService.getUserById(id);
+
+        assertTrue(actual.isPresent());
+        assertSame(expectedDto, actual.get());
+
+        verify(userValidator).validateId(id);
+        verify(userRepository).findById(id);
+        verify(userMapper).toDto(foundUser);
+    }
 }
