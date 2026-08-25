@@ -168,4 +168,27 @@ class UserServiceImplTest {
         verify(userRepository).findById(id);
         verify(userMapper).toDto(updatedUser);
     }
+
+    @Test
+    void updateUser_shouldReturnEmpty_whenUserDoesNotExist(){
+        Long id = 7L;
+        String name = "Kate";
+        String email = "kate@gmail.com";
+        Integer age = 1;
+
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        Optional<UserDto> actual = userService.updateUser(id, name, email, age);
+
+        assertTrue(actual.isEmpty());
+
+        verify(userValidator).validateId(id);
+        verify(userValidator).validateName(name);
+        verify(userValidator).validateAge(age);
+        verify(userValidator).validateEmail(email);
+        verify(userRepository).findById(id);
+        verify(userRepository, never()).update(any(User.class));
+
+        verifyNoInteractions(userMapper);
+
+    }
 }
