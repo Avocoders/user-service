@@ -195,17 +195,29 @@ class UserServiceImplTest {
     @Test
     void deleteUser_shouldReturnTrue_whenUserExists(){
         Long id = 8L;
-        boolean deleteUser = true;
-        when(userRepository.deleteById(id)).thenReturn(deleteUser);
 
-        boolean deletedUser = userService.deleteUser(id);
+        when(userRepository.deleteById(id)).thenReturn(true);
 
-        assertTrue(deletedUser);
+        boolean deleted = userService.deleteUser(id);
+
+        assertTrue(deleted);
 
         verify(userValidator).validateId(id);
         verify(userRepository).deleteById(id);
         verifyNoInteractions(userMapper);
     }
 
+    @Test
+    void deleteUser_shouldReturnFalse_whenUserDoesNotExist(){
+        Long id =9L;
 
+        when(userRepository.deleteById(id)).thenReturn(false);
+        boolean deleted = userService.deleteUser(id);
+
+        assertFalse(deleted);
+
+        verify(userRepository).deleteById(id);
+        verify(userValidator).validateId(id);
+        verifyNoInteractions(userMapper);
+    }
 }
