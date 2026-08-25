@@ -132,4 +132,40 @@ class UserServiceImplTest {
         verifyNoInteractions(userMapper);
         verifyNoInteractions(userValidator);
     }
+
+    @Test
+    void updateUser_shouldReturnUpdatedDto_whenUserExists(){
+        Long id = 7L;
+        String name = "Kate";
+        String email = "kate@gmail.com";
+        Integer age = 1;
+        User existingUser = new User("Yulia", "yulia@ya.ru", 2);
+        when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
+
+        User updatedUser = new User(name, email, age);
+        when(userRepository.update(any(User.class))).thenReturn(updatedUser);
+
+        UserDto expectedDto = new UserDto(id, name, email);
+        when(userMapper.toDto(updatedUser)).thenReturn(expectedDto);
+
+        Optional<UserDto> actual = userService.updateUser(id, name, email, age);
+
+        assertSame(expectedDto, actual.orElseThrow());
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).update(captor.capture());
+        User userSentToUpdate = captor.getValue();
+
+        assertEquals(name, userSentToUpdate.getName());
+        assertEquals(email, userSentToUpdate.getEmail());
+        assertEquals(age, userSentToUpdate.getAge());
+
+        verify(userValidator).validateId(id);
+        verify(userValidator).validateName(name);
+        verify(userValidator).validateEmail(email);
+        verify(userValidator).validateAge(age);
+        verify(userRepository).findById(id);
+        verify(userMapper).toDto(updatedUser);
+    }
 }
