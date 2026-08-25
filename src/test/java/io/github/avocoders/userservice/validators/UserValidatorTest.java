@@ -80,7 +80,7 @@ class UserValidatorTest {
 
     @Test
     void validateEmail_shouldThrowException_whenEmailLengthMore255() {
-        String email = "f".repeat(257) + "@ya.ru";
+        String email = "f".repeat(250) + "@ya.ru";
         assertThrows( UserValidationException.class, () -> userValidator.validateEmail(email));
     }
 
@@ -88,6 +88,36 @@ class UserValidatorTest {
     void validateEmail_shouldThrowException_whenEmailIsInvalid() {
         String email = "k.jnfgiusd@dfbd";
         assertThrows( UserValidationException.class, () -> userValidator.validateEmail(email));
+    }
+
+    @Test
+    void validateAge_whenAgeIsValid() {
+        Integer age = 10;
+        assertDoesNotThrow(() -> userValidator.validateAge(age));
+    }
+
+    @Test
+    void validateAge_whenAgeIsZero() {
+        Integer age = 0;
+        assertDoesNotThrow(() -> userValidator.validateAge(age));
+    }
+
+    @Test
+    void validateAge_shouldThrowException_whenAgeIsNull() {
+        Integer age = null;
+        assertThrows( UserValidationException.class, () -> userValidator.validateAge(age));
+    }
+
+    @Test
+    void validateAge_shouldThrowException_whenAgeIsNegative() {
+        Integer age = -1;
+        assertThrows( UserValidationException.class, () -> userValidator.validateAge(age));
+    }
+
+    @Test
+    void validateAge_shouldThrowException_whenAgeMore150() {
+        Integer age = 151;
+        assertThrows( UserValidationException.class, () -> userValidator.validateAge(age));
     }
 
 }
