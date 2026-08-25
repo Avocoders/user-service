@@ -191,4 +191,21 @@ class UserServiceImplTest {
         verifyNoInteractions(userMapper);
 
     }
+
+    @Test
+    void deleteUser_shouldReturnTrue_whenUserExists(){
+        Long id = 8L;
+        boolean deleteUser = true;
+        when(userRepository.deleteById(id)).thenReturn(deleteUser);
+
+        boolean deletedUser = userService.deleteUser(id);
+
+        assertTrue(deletedUser);
+
+        verify(userValidator).validateId(id);
+        verify(userRepository).deleteById(id);
+        verifyNoInteractions(userMapper);
+    }
+
+
 }
